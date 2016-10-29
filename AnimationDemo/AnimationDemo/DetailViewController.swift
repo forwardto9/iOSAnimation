@@ -27,11 +27,24 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.configureView()
-        
-        
         animationWith(propterty: self.detailDescriptionLabel.text!)
     }
 
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // anchorPoint 公式
+        // frame.orign.x = position.x - anchorPoint.x * bounds.size.width
+        // frmae.orign.y = position.y - anchorPoint.y * bounds.size.height
+        UIView.animate(withDuration: 3, delay: 2, options: UIViewAnimationOptions.curveEaseIn, animations: {
+            self.detailDescriptionLabel.layer.anchorPoint = CGPoint(x: 1, y: 1)
+        }) { (result) in
+            //
+            print(result)
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -138,6 +151,21 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.isRemovedOnCompletion = false
             self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
             tips(info: (propterty + " " + "computed from the bounds and position, so it is not animatable"))
+        } else if propterty == "anchorPoint" {
+            let basicAnimation = CABasicAnimation(keyPath: "archorPoint")
+            basicAnimation.delegate = self
+            basicAnimation.duration = 3
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSValue.init(cgPoint: CGPoint(x: 0, y: 0))
+            basicAnimation.byValue   = NSValue.init(cgPoint: CGPoint(x: 0.5, y: 0.5))
+            basicAnimation.toValue   = NSValue.init(cgPoint: CGPoint(x: 1, y: 1))
+            
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey:propterty)
+            
+            tips(info: (propterty + " " + "is used to compute frame.orign, so it is not animatable"))
         }
     }
     
@@ -149,6 +177,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.brown
         } else if self.detailDescriptionLabel.layer.animation(forKey: "frame") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.yellow
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "anchorPoint") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.brown
         }
     }
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
@@ -159,6 +189,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         } else if self.detailDescriptionLabel.layer.animation(forKey: "frame") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
             removeTips()
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "anchorPoint") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
         }
         self.detailDescriptionLabel.layer.removeAllAnimations()
     }
