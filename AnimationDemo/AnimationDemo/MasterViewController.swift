@@ -136,9 +136,6 @@ class MasterViewController: UITableViewController {
         return objects[section].keys.first
     }
     
-    
-    
-    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             objects.remove(at: indexPath.row)

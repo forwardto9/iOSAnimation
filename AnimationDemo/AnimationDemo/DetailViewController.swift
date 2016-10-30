@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreGraphics
 
 class DetailViewController: UIViewController, CAAnimationDelegate{
 
@@ -151,7 +152,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
             tips(info: (propterty + " " + "computed from the bounds and position, so it is not animatable"))
         } else if propterty == "anchorPoint" {
-            let basicAnimation = CABasicAnimation(keyPath: "archorPoint")
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
             basicAnimation.delegate = self
             basicAnimation.duration = 3
             basicAnimation.repeatCount = 2
@@ -166,7 +167,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             tips(info: (propterty + " " + "is used to compute frame.orign, so it is not animatable"))
         } else if propterty == "cornerRadius" {
-            let basicAnimation = CABasicAnimation(keyPath: "cornerRadius")
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
             basicAnimation.delegate = self
             basicAnimation.duration = 3
             basicAnimation.repeatCount = 2
@@ -202,6 +203,43 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             // MARK: - CAAnimationGroup allows multiple animations to be grouped and run concurrently
 //            let animationGroup = CAAnimationGroup()
+        } else if propterty == "zPosition" {
+            
+            let layer1 = CAShapeLayer()
+            let path = CGMutablePath()
+            path.addEllipse(in: CGRect(x: 0, y: 64, width: 100, height: 300))
+            layer1.path = path
+            layer1.fillColor = UIColor.purple.cgColor
+            layer1.zPosition = 100
+            
+            
+            let layer2 = CAShapeLayer()
+            let path2 = CGMutablePath()
+            path2.addEllipse(in: CGRect(x: 0, y: 64, width: 100, height: 300))
+            layer2.path = path
+            layer2.fillColor = UIColor.cyan.cgColor
+            layer2.zPosition = -100
+            
+            self.view.layer.addSublayer(layer1)
+            self.view.layer.addSublayer(layer2)
+            
+            var transformIdentity = CATransform3DIdentity
+            transformIdentity.m34 = -1/700
+            transformIdentity = CATransform3DRotate(transformIdentity, CGFloat(M_PI/3), 0, 1, 0)
+            self.view.layer.sublayerTransform = transformIdentity
+            
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            keyframeAnimation.delegate = self
+            keyframeAnimation.duration = 2
+            keyframeAnimation.repeatCount = 3
+            keyframeAnimation.isRemovedOnCompletion = false
+            keyframeAnimation.autoreverses = true
+            keyframeAnimation.values = [NSNumber.init(value: -100), NSNumber.init(value: 0), NSNumber.init(value: 50), NSNumber.init(value: 150)]
+            keyframeAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
+            
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
+            layer2.add(keyframeAnimation, forKey: propterty)
+            
         }
     }
     
@@ -219,6 +257,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.gray
         } else if self.detailDescriptionLabel.layer.animation(forKey: "transform") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.orange
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "zPosition") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.lightGray
         }
     }
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
@@ -234,6 +274,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         } else if self.detailDescriptionLabel.layer.animation(forKey: "cornerRadius") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         } else if self.detailDescriptionLabel.layer.animation(forKey: "transform") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "zPosition") == anim { // TODO:- why not call?
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         }
         self.detailDescriptionLabel.layer.removeAllAnimations()
