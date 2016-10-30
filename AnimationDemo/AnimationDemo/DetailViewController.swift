@@ -27,22 +27,21 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.configureView()
-        animationWith(propterty: self.detailDescriptionLabel.text!)
     }
 
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        animationWith(propterty: self.detailDescriptionLabel.text!)
         // anchorPoint 公式
         // frame.orign.x = position.x - anchorPoint.x * bounds.size.width
         // frmae.orign.y = position.y - anchorPoint.y * bounds.size.height
-        UIView.animate(withDuration: 3, delay: 2, options: UIViewAnimationOptions.curveEaseIn, animations: {
-            self.detailDescriptionLabel.layer.anchorPoint = CGPoint(x: 1, y: 1)
-        }) { (result) in
+//        UIView.animate(withDuration: 3, delay: 2, options: UIViewAnimationOptions.curveEaseIn, animations: {
+//            self.detailDescriptionLabel.layer.anchorPoint = CGPoint(x: 1, y: 1)
+//        }) { (result) in
             //
-            print(result)
-        }
+//            print(result)
+//        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -166,6 +165,43 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.layer.add(basicAnimation, forKey:propterty)
             
             tips(info: (propterty + " " + "is used to compute frame.orign, so it is not animatable"))
+        } else if propterty == "cornerRadius" {
+            let basicAnimation = CABasicAnimation(keyPath: "cornerRadius")
+            basicAnimation.delegate = self
+            basicAnimation.duration = 3
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: 0)
+            basicAnimation.byValue   = NSNumber(value: Float(self.detailDescriptionLabel.bounds.size.height/2))
+            basicAnimation.toValue   = NSNumber(value: Float(self.detailDescriptionLabel.bounds.size.height/2 + 20))
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "transform" { // MARK:- anchorPoint property is crutail to transform
+            
+            let translationXButton = UIButton(type: .custom)
+            translationXButton.frame = CGRect(x: 0, y: 64, width: 200, height: 44)
+            translationXButton.backgroundColor = UIColor.darkText
+            translationXButton.setTitle((propterty + "." + "translation.x"), for: .normal)
+            translationXButton.addTarget(self, action: #selector(DetailViewController.translationXAnimation), for: .touchUpInside)
+            self.view.addSubview(translationXButton)
+            
+            let rotationYButton = UIButton(type: .custom)
+            rotationYButton.frame = CGRect(x: 0, y: 108, width: 200, height: 44)
+            rotationYButton.backgroundColor = UIColor.darkText
+            rotationYButton.setTitle((propterty + "." + "rotation.y"), for: .normal)
+            rotationYButton.addTarget(self, action: #selector(DetailViewController.rotationYAnimation), for: .touchUpInside)
+            self.view.addSubview(rotationYButton)
+            
+            let scaleXButton = UIButton(type: .custom)
+            scaleXButton.frame = CGRect(x: 0, y: 152, width: 200, height: 44)
+            scaleXButton.backgroundColor = UIColor.darkText
+            scaleXButton.setTitle((propterty + "." + "scale.x"), for: .normal)
+            scaleXButton.addTarget(self, action: #selector(DetailViewController.scaleXAnimation), for: .touchUpInside)
+            self.view.addSubview(scaleXButton)
+            
+            // MARK: - CAAnimationGroup allows multiple animations to be grouped and run concurrently
+//            let animationGroup = CAAnimationGroup()
         }
     }
     
@@ -179,6 +215,10 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.yellow
         } else if self.detailDescriptionLabel.layer.animation(forKey: "anchorPoint") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.brown
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "cornerRadius") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.gray
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "transform") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.orange
         }
     }
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
@@ -190,6 +230,10 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
             removeTips()
         } else if self.detailDescriptionLabel.layer.animation(forKey: "anchorPoint") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "cornerRadius") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "transform") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         }
         self.detailDescriptionLabel.layer.removeAllAnimations()
@@ -217,6 +261,50 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
     }
     func removeTips() -> Void {
         tipsLabel.removeFromSuperview()
+    }
+    
+    func translationXAnimation() -> Void { // "translation" must be nsvalue with NSSize or CGSize,it indicate x and y axis
+        self.detailDescriptionLabel.layer.removeAllAnimations()
+        let animationTranslationX = CABasicAnimation(keyPath: "transform.translation.x")
+        animationTranslationX.delegate = self
+        animationTranslationX.duration = 3
+        animationTranslationX.repeatCount = 2
+        animationTranslationX.autoreverses = true
+        animationTranslationX.isRemovedOnCompletion = false
+        
+        animationTranslationX.fromValue = NSNumber(value: -50)
+        animationTranslationX.byValue   = NSNumber(value: 0)
+        animationTranslationX.toValue   = NSNumber(value: 50)
+        
+        self.detailDescriptionLabel.layer.add(animationTranslationX, forKey: "transform")
+    }
+    
+    func rotationYAnimation() -> Void { //  "rotation" is identical to setting "rotation.z"
+        self.detailDescriptionLabel.layer.removeAllAnimations()
+        let animationRotationX = CABasicAnimation(keyPath: "transform.rotation.y")
+        animationRotationX.delegate = self
+        animationRotationX.duration = 3
+        animationRotationX.repeatCount = 2
+        animationRotationX.isRemovedOnCompletion = false
+        animationRotationX.autoreverses = true
+        animationRotationX.fromValue = NSNumber(value: 0)
+        animationRotationX.byValue   = NSNumber(value: M_PI_4)
+        animationRotationX.toValue   = NSNumber(value: M_PI/3)
+        self.detailDescriptionLabel.layer.add(animationRotationX, forKey: "transform")
+    }
+    
+    func scaleXAnimation() -> Void { // "scale" is the average for all three(x,y,z) scale factors
+        self.detailDescriptionLabel.layer.removeAllAnimations()
+        let animationScaleX = CABasicAnimation(keyPath: "transform.scale.x")
+        animationScaleX.delegate = self
+        animationScaleX.duration = 3
+        animationScaleX.repeatCount = 2
+        animationScaleX.isRemovedOnCompletion = false
+        animationScaleX.autoreverses = true
+        
+        animationScaleX.fromValue = NSNumber(value: 1)
+        animationScaleX.toValue   = NSNumber(value: 5)
+        self.detailDescriptionLabel.layer.add(animationScaleX, forKey: "transform")
     }
 }
 

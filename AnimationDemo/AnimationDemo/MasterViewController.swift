@@ -19,7 +19,7 @@ class MasterViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         // 1.Geometry Properties
-        let geometryProperties = ["geometryProperties":["bounds", "position", "frame", "anchorPoint", "conerRadius", "transform", "zPosition"]]
+        let geometryProperties = ["geometryProperties":["bounds", "position", "frame", "anchorPoint", "cornerRadius", "transform", "zPosition"]]
         
         // 2.Background Properties：
         let backgroundProperties = ["backgroundProperties":["backgroundColor", "backgroundFilters"]]
