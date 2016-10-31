@@ -25,10 +25,10 @@ class MasterViewController: UITableViewController {
         let backgroundProperties = ["backgroundProperties":["backgroundColor", "backgroundFilters"]]
         
         // 3.Layer Content 
-        let layerContent = ["layerContent":["contents", "contentGravity", "maskToBounds"]]
+        let layerContent = ["layerContent":["contents", "contentsGravity", "masksToBounds"]]
         
         // 4.Sublayers Content
-        let sublayersContent = ["sublayersContent":["sublayers", "masksToBounds", "sublayerTransform"]]
+        let sublayersContent = ["sublayersContent":[/*"sublayers", "masksToBounds", */"sublayerTransform"]]
         
         // 5.Border Attributes
         let borderAttributes = ["borderAttributes":["borderColor", "borderWidth"]]
@@ -42,9 +42,6 @@ class MasterViewController: UITableViewController {
         // 8.Opacity Property
         let opacityProperty = ["opacityProperty":["opacity"]]
         
-        // 9.Mask Properties
-        let maskProperties = ["maskProperties":["mask"]]
-        
         objects.append(geometryProperties)
         objects.append(backgroundProperties)
         objects.append(layerContent)
@@ -53,8 +50,6 @@ class MasterViewController: UITableViewController {
         objects.append(filtersProperty)
         objects.append(shadowProperties)
         objects.append(opacityProperty)
-        objects.append(maskProperties)
-
         self.tableView.reloadData()
         
         
@@ -62,7 +57,7 @@ class MasterViewController: UITableViewController {
         self.navigationItem.leftBarButtonItem = self.editButtonItem
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
-        self.navigationItem.rightBarButtonItem = addButton
+//        self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
@@ -86,7 +81,6 @@ class MasterViewController: UITableViewController {
     }
 
     // MARK: - Segues
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -138,8 +132,7 @@ class MasterViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            objects.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            // TODO: - how to delete
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }

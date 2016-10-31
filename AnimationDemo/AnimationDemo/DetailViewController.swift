@@ -164,8 +164,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.toValue   = NSValue.init(cgPoint: CGPoint(x: 1, y: 1))
             
             self.detailDescriptionLabel.layer.add(basicAnimation, forKey:propterty)
-            
-            tips(info: (propterty + " " + "is used to compute frame.orign, so it is not animatable"))
+            tips(info: "this is a test line")
         } else if propterty == "cornerRadius" {
             let basicAnimation = CABasicAnimation(keyPath: propterty)
             basicAnimation.delegate = self
@@ -240,11 +239,242 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
             layer2.add(keyframeAnimation, forKey: propterty)
             
+        } else if propterty == "backgroundColor" {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            keyframeAnimation.delegate = self
+            keyframeAnimation.duration = 2
+            keyframeAnimation.repeatCount = 3
+            keyframeAnimation.isRemovedOnCompletion = false
+            keyframeAnimation.autoreverses = true
+            keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
+        } else if propterty == "backgroundFilters" {
+            tips(info: "This property is not supported on layers in iOS.")
+        } else if propterty == "contents" {
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            // below code does not working because of image
+//            let ciColor = CIColor.init(red: 1, green: 0, blue: 0)
+//            let ciImage = CIImage.init(color: ciColor).cropping(to: CGRect(x: 0, y: 0, width: 100, height: 100))
+//            let image1 = UIImage.init(ciImage: ciImage)
+//            let ciImage2 = CIImage.init(color: CIColor(red: 0, green: 1, blue: 0)).cropping(to: CGRect(x: 0, y: 0, width: 100, height: 100))
+//            let image2 = UIImage(ciImage: ciImage2)
+            let image1 = UIImage(named: "black")
+            let image2 = UIImage(named: "white")
+            
+            
+            basicAnimation.fromValue = image1?.cgImage
+            basicAnimation.toValue   = image2?.cgImage
+            
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "contentsGravity" {
+            let v = CALayer()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.lightGray.cgColor
+            v.contentsGravity = kCAGravityTopLeft
+            let image = UIImage(named: "contentsGravity")
+            v.contents = image?.cgImage
+            self.view.layer.addSublayer(v)
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+
+            basicAnimation.fromValue = kCAGravityTopLeft
+            basicAnimation.toValue   = kCAGravityBottomRight
+            
+            v.add(basicAnimation, forKey: propterty)
+            UIView.animate(withDuration: 3, delay: 2, options: UIViewAnimationOptions.allowAnimatedContent, animations: {
+                v.contentsGravity = kCAGravityCenter
+                }, completion: { (result) in
+                    //
+            })
+            
+            tips(info: "contentsGravity is similar to the contentMode of the view class, and is not animatable")
+        } else if propterty == "masksToBounds" {
+            let v = CALayer()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 100, y: 80, width: 200, height: 30)
+            v.backgroundColor = UIColor.lightGray.cgColor
+            v.contentsGravity = kCAGravityCenter
+            v.masksToBounds = true
+            let image = UIImage(named: "contentsGravity")
+            v.contents = image?.cgImage
+            self.view.layer.addSublayer(v)
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: true)
+            basicAnimation.toValue   = NSNumber(value: false)
+            v.add(basicAnimation, forKey: propterty)
+            
+            UIView.animate(withDuration: 3, delay: 5, options: UIViewAnimationOptions.allowAnimatedContent, animations: {
+                v.masksToBounds = false
+                }, completion: { (result) in
+                    //
+            })
+            
+            tips(info: propterty + " is not animatable in iOS")
+        } else if propterty == "sublayerTransform" {
+            // TODO: - subtransform
+        } else if propterty == "borderColor" {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
+            self.detailDescriptionLabel.layer.borderWidth = 5
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            keyframeAnimation.delegate = self
+            keyframeAnimation.duration = 2
+            keyframeAnimation.repeatCount = 3
+            keyframeAnimation.isRemovedOnCompletion = false
+            keyframeAnimation.autoreverses = true
+            keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
+        } else if propterty == "borderWidth" {
+            self.detailDescriptionLabel.layer.borderColor = UIColor.black.cgColor
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: 0)
+            basicAnimation.toValue   = NSNumber(value: 5)
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "filter" || propterty == "compositingFilter" {
+            tips(info: "This property is not supported on layers in iOS.")
+        } else if propterty == "opacity" {
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: 0)
+            basicAnimation.toValue   = NSNumber(value: 1)
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "shadowColor"{
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
+            self.detailDescriptionLabel.layer.shadowOffset = CGSize(width: 5, height: 5)
+            self.detailDescriptionLabel.layer.shadowOpacity = 1
+            
+            let v = UIView()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.white
+            v.layer.shadowOpacity = 1
+            v.layer.shadowOffset  = CGSize(width: 10, height: 15)
+            v.layer.shadowColor   = UIColor.black.cgColor
+            self.view.addSubview(v)
+            
+            
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            keyframeAnimation.delegate = self
+            keyframeAnimation.duration = 2
+            keyframeAnimation.repeatCount = 3
+            keyframeAnimation.isRemovedOnCompletion = false
+            keyframeAnimation.autoreverses = true
+            keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
+            v.layer.add(keyframeAnimation, forKey: propterty)
+        } else if propterty == "shadowOffset" { // shadowOffset default is (0, -3)
+            let v = UIView()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.white
+            v.layer.shadowOpacity = 1 // default is 0 (0-1)
+            v.layer.shadowColor   = UIColor.black.cgColor
+            self.view.addSubview(v)
+            
+            
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            keyframeAnimation.delegate = self
+            keyframeAnimation.duration = 2
+            keyframeAnimation.repeatCount = 3
+            keyframeAnimation.isRemovedOnCompletion = false
+            keyframeAnimation.autoreverses = true
+            keyframeAnimation.values = [NSValue.init(cgSize: CGSize(width: 10, height: 0)), NSValue.init(cgSize: CGSize(width: 10, height: 5)), NSValue.init(cgSize: CGSize(width: 10, height: 15))]
+            v.layer.add(keyframeAnimation, forKey: propterty)
+        } else if propterty == "shadowOpacity" {
+            let v = UIView()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.white
+            v.layer.shadowOffset  = CGSize(width: 10, height: 15)
+            v.layer.shadowColor   = UIColor.black.cgColor
+            self.view.addSubview(v)
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: 0)
+            basicAnimation.toValue   = NSNumber(value: 1)
+            v.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "shadowRadius" {
+            let v = UIView()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.white
+            v.layer.shadowOffset  = CGSize(width: 10, height: 15)
+            v.layer.shadowColor   = UIColor.orange.cgColor
+            v.layer.shadowOpacity = 1
+            self.view.addSubview(v)
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            basicAnimation.fromValue = NSNumber(value: 0)
+            basicAnimation.toValue   = NSNumber(value: Float(v.bounds.size.width/2))
+            v.layer.add(basicAnimation, forKey: propterty)
+        } else if propterty == "shadowPath" {
+            let v = UIView()
+            v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
+            v.backgroundColor = UIColor.blue
+            v.layer.shadowOffset  = CGSize(width: 10, height: 15)
+            v.layer.shadowColor   = UIColor.orange.cgColor
+            v.layer.shadowOpacity = 1
+            self.view.addSubview(v)
+            
+            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            basicAnimation.delegate = self
+            basicAnimation.duration = 2
+            basicAnimation.repeatCount = 2
+            basicAnimation.autoreverses = true
+            basicAnimation.isRemovedOnCompletion = false
+            
+            let path1 = CGMutablePath()
+            path1.addEllipse(in: CGRect(x:80, y: 20, width: 10, height: 10))
+            let path2 = CGMutablePath()
+            path2.addEllipse(in: CGRect(x:80, y: 20, width: 100, height: 100))
+            
+            
+            basicAnimation.fromValue = path1
+            basicAnimation.toValue   = path2
+            v.layer.add(basicAnimation, forKey: propterty)
+
         }
     }
     
-    func animationDidStart(_ anim: CAAnimation) {
-        print(animationDidStart)
+    func animationDidStart(_ anim: CAAnimation) { // even though put a break point in this delegate method,but not effect the animation thread
+        print("animationDidStart")
         if self.detailDescriptionLabel.layer.animation(forKey: "bounds") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.red
         } else if self.detailDescriptionLabel.layer.animation(forKey: "position") == anim {
@@ -259,9 +489,18 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.orange
         } else if self.detailDescriptionLabel.layer.animation(forKey: "zPosition") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.lightGray
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "backgroundColor") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "borderColor") == anim || self.detailDescriptionLabel.layer.animation(forKey: "borderWidth") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.orange
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "opacity") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.darkGray
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "shadowColor") == anim {
+            
         }
     }
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        print("animationDidStop")
         if self.detailDescriptionLabel.layer.animation(forKey: "bounds") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         } else if self.detailDescriptionLabel.layer.animation(forKey: "position") == anim {
@@ -277,7 +516,14 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         } else if self.detailDescriptionLabel.layer.animation(forKey: "zPosition") == anim { // TODO:- why not call?
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "backgroundColor") == anim { // TODO:- why not call?
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "borderColor") == anim || self.detailDescriptionLabel.layer.animation(forKey: "borderWidth") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "opacity") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
         }
+            
         self.detailDescriptionLabel.layer.removeAllAnimations()
     }
     
