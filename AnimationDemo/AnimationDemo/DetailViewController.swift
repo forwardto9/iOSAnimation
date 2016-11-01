@@ -200,8 +200,24 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             scaleXButton.addTarget(self, action: #selector(DetailViewController.scaleXAnimation), for: .touchUpInside)
             self.view.addSubview(scaleXButton)
             
+            
+            self.view.backgroundColor = UIColor.orange
             // MARK: - CAAnimationGroup allows multiple animations to be grouped and run concurrently
 //            let animationGroup = CAAnimationGroup()
+            var transformIdentity = CATransform3DIdentity // 左乘矩阵
+            print(transformIdentity)
+            transformIdentity.m41 = 100
+            transformIdentity.m42 = 100
+            // m41,m42,m43用来平移
+            // mm11, m22, m33,是用来缩放的
+            
+            
+            
+            print(transformIdentity)
+            self.view.layer.transform = transformIdentity
+            
+            
+            
         } else if propterty == "zPosition" {
             
             let layer1 = CAShapeLayer()
