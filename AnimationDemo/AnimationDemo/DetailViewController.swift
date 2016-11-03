@@ -9,10 +9,11 @@
 import UIKit
 import CoreGraphics
 
-class DetailViewController: UIViewController, CAAnimationDelegate{
+class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
 
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     fileprivate var tipsLabel:UILabel!
+    fileprivate var  dynamicAnimator:UIDynamicAnimator!
 
 
     func configureView() {
@@ -33,7 +34,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        animationWith(propterty: self.detailDescriptionLabel.text!)
+        animationWith(property: self.detailDescriptionLabel.text!)
         // anchorPoint 公式
         // frame.orign.x = position.x - anchorPoint.x * bounds.size.width
         // frmae.orign.y = position.y - anchorPoint.y * bounds.size.height
@@ -58,9 +59,9 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
     }
 
 
-    func animationWith(propterty:String) -> Void {
-        if propterty == "bounds" {
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+    func animationWith(property:String) -> Void {
+        if property == "bounds" {
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             // 对于CABasicAnimation类来说，是一个简单的最多3帧的动画，即fromValue，byValue，toValue
             basicAnimation.fromValue = NSValue.init(cgRect: CGRect(x: self.detailDescriptionLabel.frame.origin.x, y: self.detailDescriptionLabel.frame.origin.y, width: self.detailDescriptionLabel.bounds.size.width, height: 100))
@@ -94,9 +95,9 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             // CAAnimation类的属性，决定代理方法的stop方法会不会被调用
             basicAnimation.isRemovedOnCompletion = false
             
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "position" {
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+        } else if property == "position" {
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             
             keyframeAnimation.delegate = self
             keyframeAnimation.isRemovedOnCompletion = false
@@ -138,9 +139,9 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             //  If the number of keyframes in the values property is n, then this property should contain n-1 objects.
             // 如果设置了timingFunction属性，那么会首先执行，然后紧接着才会执行这个数组中的时间函数
             keyframeAnimation.timingFunctions = [CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseOut)]
-            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
-        } else if propterty == "frame" {
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
+        } else if property == "frame" {
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.fromValue = NSValue.init(cgRect: CGRect(x: 10, y: 100, width: self.detailDescriptionLabel.bounds.size.width, height: 100))
             basicAnimation.byValue  = NSValue.init(cgRect: self.detailDescriptionLabel.frame)
@@ -149,10 +150,10 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.repeatCount = 2
             basicAnimation.autoreverses = true
             basicAnimation.isRemovedOnCompletion = false
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-            tips(info: (propterty + " " + "computed from the bounds and position, so it is not animatable"))
-        } else if propterty == "anchorPoint" {
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+            tips(info: (property + " " + "computed from the bounds and position, so it is not animatable"))
+        } else if property == "anchorPoint" {
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 3
             basicAnimation.repeatCount = 2
@@ -163,10 +164,10 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.byValue   = NSValue.init(cgPoint: CGPoint(x: 0.5, y: 0.5))
             basicAnimation.toValue   = NSValue.init(cgPoint: CGPoint(x: 1, y: 1))
             
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey:propterty)
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey:property)
             tips(info: "this is a test line")
-        } else if propterty == "cornerRadius" {
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+        } else if property == "cornerRadius" {
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 3
             basicAnimation.repeatCount = 2
@@ -176,49 +177,85 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.fromValue = NSNumber(value: 0)
             basicAnimation.byValue   = NSNumber(value: Float(self.detailDescriptionLabel.bounds.size.height/2))
             basicAnimation.toValue   = NSNumber(value: Float(self.detailDescriptionLabel.bounds.size.height/2 + 20))
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "transform" { // MARK:- anchorPoint property is crutail to transform
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+        } else if property == "transform" { // MARK:- anchorPoint property is crutail to transform
             
-            let translationXButton = UIButton(type: .custom)
-            translationXButton.frame = CGRect(x: 0, y: 64, width: 200, height: 44)
-            translationXButton.backgroundColor = UIColor.darkText
-            translationXButton.setTitle((propterty + "." + "translation.x"), for: .normal)
-            translationXButton.addTarget(self, action: #selector(DetailViewController.translationXAnimation), for: .touchUpInside)
-            self.view.addSubview(translationXButton)
-            
-            let rotationYButton = UIButton(type: .custom)
-            rotationYButton.frame = CGRect(x: 0, y: 108, width: 200, height: 44)
-            rotationYButton.backgroundColor = UIColor.darkText
-            rotationYButton.setTitle((propterty + "." + "rotation.y"), for: .normal)
-            rotationYButton.addTarget(self, action: #selector(DetailViewController.rotationYAnimation), for: .touchUpInside)
-            self.view.addSubview(rotationYButton)
-            
-            let scaleXButton = UIButton(type: .custom)
-            scaleXButton.frame = CGRect(x: 0, y: 152, width: 200, height: 44)
-            scaleXButton.backgroundColor = UIColor.darkText
-            scaleXButton.setTitle((propterty + "." + "scale.x"), for: .normal)
-            scaleXButton.addTarget(self, action: #selector(DetailViewController.scaleXAnimation), for: .touchUpInside)
-            self.view.addSubview(scaleXButton)
-            
-            
-            self.view.backgroundColor = UIColor.orange
+            self.view.backgroundColor = UIColor.lightGray
             // MARK: - CAAnimationGroup allows multiple animations to be grouped and run concurrently
 //            let animationGroup = CAAnimationGroup()
             var transformIdentity = CATransform3DIdentity // 左乘矩阵
             print(transformIdentity)
-            transformIdentity.m41 = 100
-            transformIdentity.m42 = 100
+            
             // m41,m42,m43用来平移
-            // mm11, m22, m33,是用来缩放的
+//            transformIdentity.m41 = 100
+//            transformIdentity.m42 = 100
             
+            // m11, m22, m33,是用来缩放的
+//            transformIdentity.m11 = 0.5
+//            transformIdentity.m22 = 0.5
             
+            // m22, m23, m32, m33 是用来绕X轴旋转
+            let delta = degreeToRadius(degree: 90)
+//            transformIdentity.m22 = cos(CGFloat(delta))
+//            transformIdentity.m23 = sin(CGFloat(delta))
+//            transformIdentity.m32 = -sin(CGFloat(delta))
+//            transformIdentity.m33 = cos(CGFloat(delta))
+            
+            // m11, m13, m31, m33 是用来绕Y轴旋转
+//            transformIdentity.m11 = cos(CGFloat(delta))
+//            transformIdentity.m13 = -sin(CGFloat(delta))
+//            transformIdentity.m31 = sin(CGFloat(delta))
+//            transformIdentity.m33 = cos(CGFloat(delta))
+            // m11, m12, m21, m22 是用来绕Z轴旋转
+            transformIdentity.m11 = cos(CGFloat(delta))
+            transformIdentity.m12 = sin(CGFloat(delta))
+            transformIdentity.m21 = -sin(CGFloat(delta))
+            transformIdentity.m22 = cos(CGFloat(delta))
             
             print(transformIdentity)
-            self.view.layer.transform = transformIdentity
             
+//            self.view.layer.transform = transformIdentity
             
+            let basciAnimation = CABasicAnimation(keyPath: property)
+            basciAnimation.delegate = self
+            basciAnimation.duration = 2
+            basciAnimation.repeatCount = 3
+            basciAnimation.isRemovedOnCompletion = false
+            basciAnimation.autoreverses = true
             
-        } else if propterty == "zPosition" {
+            basciAnimation.fromValue = CATransform3DIdentity
+            basciAnimation.toValue   = transformIdentity
+            
+            self.view.layer.add(basciAnimation, forKey: property)
+            // 使用以下方法可以改变变换矩阵，变换矩阵是用来左乘向量，从而达到修改向量的目的
+            // 使用CATransform3D函数
+            // 直接修改数据结构的成员
+            // 使用键-值编码改变键路径
+            // 关于变换矩阵的介绍可以参照：http://blog.csdn.net/forwardto9/article/details/9468719
+            
+            // 以下是改变键路径的Demo
+            let translationXButton = UIButton(type: .custom)
+            translationXButton.frame = CGRect(x: self.view.bounds.size.width/2 - 100, y: 64, width: 200, height: 44)
+            translationXButton.backgroundColor = UIColor.darkText
+            translationXButton.setTitle((property + "." + "translation.x"), for: .normal)
+            translationXButton.addTarget(self, action: #selector(DetailViewController.translationXAnimation), for: .touchUpInside)
+            self.view.addSubview(translationXButton)
+            
+            let rotationYButton = UIButton(type: .custom)
+            rotationYButton.frame = CGRect(x: self.view.bounds.size.width/2 - 100, y: 108, width: 200, height: 44)
+            rotationYButton.backgroundColor = UIColor.darkText
+            rotationYButton.setTitle((property + "." + "rotation.y"), for: .normal)
+            rotationYButton.addTarget(self, action: #selector(DetailViewController.rotationYAnimation), for: .touchUpInside)
+            self.view.addSubview(rotationYButton)
+            
+            let scaleXButton = UIButton(type: .custom)
+            scaleXButton.frame = CGRect(x: self.view.bounds.size.width/2 - 100, y: 152, width: 200, height: 44)
+            scaleXButton.backgroundColor = UIColor.darkText
+            scaleXButton.setTitle((property + "." + "scale.x"), for: .normal)
+            scaleXButton.addTarget(self, action: #selector(DetailViewController.scaleXAnimation), for: .touchUpInside)
+            self.view.addSubview(scaleXButton)
+            
+        } else if property == "zPosition" {
             
             let layer1 = CAShapeLayer()
             let path = CGMutablePath()
@@ -243,7 +280,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             transformIdentity = CATransform3DRotate(transformIdentity, CGFloat(M_PI/3), 0, 1, 0)
             self.view.layer.sublayerTransform = transformIdentity
             
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             keyframeAnimation.delegate = self
             keyframeAnimation.duration = 2
             keyframeAnimation.repeatCount = 3
@@ -252,24 +289,24 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             keyframeAnimation.values = [NSNumber.init(value: -100), NSNumber.init(value: 0), NSNumber.init(value: 50), NSNumber.init(value: 150)]
             keyframeAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
             
-            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
-            layer2.add(keyframeAnimation, forKey: propterty)
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
+            layer2.add(keyframeAnimation, forKey: property)
             
-        } else if propterty == "backgroundColor" {
+        } else if property == "backgroundColor" {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             keyframeAnimation.delegate = self
             keyframeAnimation.duration = 2
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
             keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
-            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
-        } else if propterty == "backgroundFilters" {
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
+        } else if property == "backgroundFilters" {
             tips(info: "This property is not supported on layers in iOS.")
-        } else if propterty == "contents" {
+        } else if property == "contents" {
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -289,8 +326,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.fromValue = image1?.cgImage
             basicAnimation.toValue   = image2?.cgImage
             
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "contentsGravity" {
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+        } else if property == "contentsGravity" {
             let v = CALayer()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
             v.backgroundColor = UIColor.lightGray.cgColor
@@ -299,7 +336,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             v.contents = image?.cgImage
             self.view.layer.addSublayer(v)
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -309,7 +346,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             basicAnimation.fromValue = kCAGravityTopLeft
             basicAnimation.toValue   = kCAGravityBottomRight
             
-            v.add(basicAnimation, forKey: propterty)
+            v.add(basicAnimation, forKey: property)
             UIView.animate(withDuration: 3, delay: 2, options: UIViewAnimationOptions.allowAnimatedContent, animations: {
                 v.contentsGravity = kCAGravityCenter
                 }, completion: { (result) in
@@ -317,7 +354,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             })
             
             tips(info: "contentsGravity is similar to the contentMode of the view class, and is not animatable")
-        } else if propterty == "masksToBounds" {
+        } else if property == "masksToBounds" {
             let v = CALayer()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 100, y: 80, width: 200, height: 30)
             v.backgroundColor = UIColor.lightGray.cgColor
@@ -327,7 +364,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             v.contents = image?.cgImage
             self.view.layer.addSublayer(v)
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -336,7 +373,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = NSNumber(value: true)
             basicAnimation.toValue   = NSNumber(value: false)
-            v.add(basicAnimation, forKey: propterty)
+            v.add(basicAnimation, forKey: property)
             
             UIView.animate(withDuration: 3, delay: 5, options: UIViewAnimationOptions.allowAnimatedContent, animations: {
                 v.masksToBounds = false
@@ -344,23 +381,49 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
                     //
             })
             
-            tips(info: propterty + " is not animatable in iOS")
-        } else if propterty == "sublayerTransform" {
-            // TODO: - subtransform
-        } else if propterty == "borderColor" {
+            tips(info: property + " is not animatable in iOS")
+        } else if property == "sublayerTransform" {
+            self.view.backgroundColor = UIColor.brown
+            self.detailDescriptionLabel.backgroundColor = UIColor.yellow
+            
+            
+            let testView = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 100, y: 80, width: 200, height: 100))
+            testView.backgroundColor = UIColor.darkGray
+            self.view.addSubview(testView)
+            
+            var transformIdentity = CATransform3DIdentity // 左乘矩阵
+            print(transformIdentity)
+            // m11, m22, m33,是用来缩放的
+            transformIdentity.m11 = 0.5
+            transformIdentity.m22 = 0.5
+            print(transformIdentity)
+            
+            let basciAnimation = CABasicAnimation(keyPath: property)
+            basciAnimation.delegate = self
+            basciAnimation.duration = 2
+            basciAnimation.repeatCount = 3
+            basciAnimation.isRemovedOnCompletion = false
+            basciAnimation.autoreverses = true
+            
+            basciAnimation.fromValue = CATransform3DIdentity
+            basciAnimation.toValue   = transformIdentity
+            
+            self.view.layer.add(basciAnimation, forKey: property)
+            
+        } else if property == "borderColor" {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
             self.detailDescriptionLabel.layer.borderWidth = 5
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             keyframeAnimation.delegate = self
             keyframeAnimation.duration = 2
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
             keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
-            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
-        } else if propterty == "borderWidth" {
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
+        } else if property == "borderWidth" {
             self.detailDescriptionLabel.layer.borderColor = UIColor.black.cgColor
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -369,11 +432,11 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = NSNumber(value: 0)
             basicAnimation.toValue   = NSNumber(value: 5)
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "filter" || propterty == "compositingFilter" {
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+        } else if property == "filter" || property == "compositingFilter" {
             tips(info: "This property is not supported on layers in iOS.")
-        } else if propterty == "opacity" {
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+        } else if property == "opacity" {
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -382,8 +445,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = NSNumber(value: 0)
             basicAnimation.toValue   = NSNumber(value: 1)
-            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "shadowColor"{
+            self.detailDescriptionLabel.layer.add(basicAnimation, forKey: property)
+        } else if property == "shadowColor"{
             self.detailDescriptionLabel.backgroundColor = UIColor.clear // this set is first necessary, otherwise, backgroundColor's animation will does not working
             self.detailDescriptionLabel.layer.shadowOffset = CGSize(width: 5, height: 5)
             self.detailDescriptionLabel.layer.shadowOpacity = 1
@@ -397,16 +460,16 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.view.addSubview(v)
             
             
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             keyframeAnimation.delegate = self
             keyframeAnimation.duration = 2
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
             keyframeAnimation.values = [UIColor.clear.cgColor, UIColor.brown.cgColor, UIColor.red.cgColor]
-            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: propterty)
-            v.layer.add(keyframeAnimation, forKey: propterty)
-        } else if propterty == "shadowOffset" { // shadowOffset default is (0, -3)
+            self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
+            v.layer.add(keyframeAnimation, forKey: property)
+        } else if property == "shadowOffset" { // shadowOffset default is (0, -3)
             let v = UIView()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
             v.backgroundColor = UIColor.white
@@ -415,15 +478,15 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.view.addSubview(v)
             
             
-            let keyframeAnimation = CAKeyframeAnimation(keyPath: propterty)
+            let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
             keyframeAnimation.delegate = self
             keyframeAnimation.duration = 2
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
             keyframeAnimation.values = [NSValue.init(cgSize: CGSize(width: 10, height: 0)), NSValue.init(cgSize: CGSize(width: 10, height: 5)), NSValue.init(cgSize: CGSize(width: 10, height: 15))]
-            v.layer.add(keyframeAnimation, forKey: propterty)
-        } else if propterty == "shadowOpacity" {
+            v.layer.add(keyframeAnimation, forKey: property)
+        } else if property == "shadowOpacity" {
             let v = UIView()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
             v.backgroundColor = UIColor.white
@@ -431,7 +494,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             v.layer.shadowColor   = UIColor.black.cgColor
             self.view.addSubview(v)
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -440,8 +503,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = NSNumber(value: 0)
             basicAnimation.toValue   = NSNumber(value: 1)
-            v.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "shadowRadius" {
+            v.layer.add(basicAnimation, forKey: property)
+        } else if property == "shadowRadius" {
             let v = UIView()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
             v.backgroundColor = UIColor.white
@@ -450,7 +513,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             v.layer.shadowOpacity = 1
             self.view.addSubview(v)
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -459,8 +522,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = NSNumber(value: 0)
             basicAnimation.toValue   = NSNumber(value: Float(v.bounds.size.width/2))
-            v.layer.add(basicAnimation, forKey: propterty)
-        } else if propterty == "shadowPath" {
+            v.layer.add(basicAnimation, forKey: property)
+        } else if property == "shadowPath" {
             let v = UIView()
             v.frame = CGRect(x: self.view.bounds.size.width/2 - 50, y: 80, width: 100, height: 100)
             v.backgroundColor = UIColor.blue
@@ -469,7 +532,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             v.layer.shadowOpacity = 1
             self.view.addSubview(v)
             
-            let basicAnimation = CABasicAnimation(keyPath: propterty)
+            let basicAnimation = CABasicAnimation(keyPath: property)
             basicAnimation.delegate = self
             basicAnimation.duration = 2
             basicAnimation.repeatCount = 2
@@ -484,11 +547,157 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             
             basicAnimation.fromValue = path1
             basicAnimation.toValue   = path2
-            v.layer.add(basicAnimation, forKey: propterty)
+            v.layer.add(basicAnimation, forKey: property)
 
+        } else if property == "spring" {
+            let springAnimation = CASpringAnimation(keyPath: "position.y")
+            springAnimation.delegate = self
+            springAnimation.isRemovedOnCompletion = false
+
+            springAnimation.damping  = 5 // 阻尼系数
+            springAnimation.mass     = 1 // 质量
+            springAnimation.stiffness = 100 // 弹性系数
+            springAnimation.initialVelocity = -30 // 初始速度(矢量)
+            springAnimation.fromValue = self.detailDescriptionLabel.layer.position.x
+            springAnimation.toValue   = self.detailDescriptionLabel.layer.position.x - 60
+            
+            springAnimation.duration = springAnimation.settlingDuration // 计算得到的动画时间
+            
+            self.detailDescriptionLabel.layer.add(springAnimation, forKey: property)
+        } else if property == "gravity" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            
+            let gravityBehavor = UIGravityBehavior()
+            gravityBehavor.gravityDirection = CGVector(dx: 0, dy: 1)
+            gravityBehavor.magnitude = 1
+            gravityBehavor.angle     = CGFloat(degreeToRadius(degree: 45))
+            dynamicAnimator.addBehavior(gravityBehavor)
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 100))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            gravityBehavor.addItem(v)
+        } else if property == "collision" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            
+            let collisionBehavior = UICollisionBehavior()
+            collisionBehavior.collisionDelegate = self
+            collisionBehavior.collisionMode = .everything
+            collisionBehavior.translatesReferenceBoundsIntoBoundary = true
+            collisionBehavior.setTranslatesReferenceBoundsIntoBoundary(with: UIEdgeInsets(top: 10, left: 10, bottom: 100, right: 10))
+            let bezierPath = UIBezierPath(arcCenter: CGPoint(x:self.view.bounds.width/2, y:self.view.bounds.height/2), radius: self.view.bounds.width/2 - 50, startAngle: 0, endAngle: CGFloat(2) * CGFloat(M_PI), clockwise: true)
+            collisionBehavior.addBoundary(withIdentifier: property as NSString, for: bezierPath)
+            collisionBehavior.addBoundary(withIdentifier: "bounds2" as NSString, from: CGPoint(x:10, y:self.view.bounds.height/2), to: CGPoint(x:self.view.bounds.width/2, y:self.view.bounds.height))
+            dynamicAnimator.addBehavior(collisionBehavior)
+            
+            let shapeLayer = CAShapeLayer()
+            shapeLayer.path = bezierPath.cgPath
+            shapeLayer.strokeColor = UIColor.black.cgColor
+            shapeLayer.fillColor   = UIColor.clear.cgColor
+            self.view.layer.addSublayer(shapeLayer)
+            
+            let gravityBehavor = UIGravityBehavior()
+            gravityBehavor.gravityDirection = CGVector(dx: 0, dy: 1)
+            gravityBehavor.magnitude = 1
+            //gravityBehavor.angle     = CGFloat(degreeToRadius(degree: 45))
+            dynamicAnimator.addBehavior(gravityBehavor)
+            
+            
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            gravityBehavor.addItem(v)
+            collisionBehavior.addItem(v)
+        } else if property == "attachment" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            let gravityBehavor = UIGravityBehavior()
+            gravityBehavor.gravityDirection = CGVector(dx: 0, dy: 1)
+            gravityBehavor.magnitude = 1
+            //gravityBehavor.angle     = CGFloat(degreeToRadius(degree: 45))
+            dynamicAnimator.addBehavior(gravityBehavor)
+            
+            
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            gravityBehavor.addItem(v)
+            
+            let v1 = UIView(frame: CGRect(x: self.view.bounds.size.width/2 + 50, y: 200, width: 50, height: 10))
+            v1.backgroundColor = .gray
+            self.view.addSubview(v1)
+            
+            let attachmentBehavior = UIAttachmentBehavior(item: v, attachedTo: v1)
+            attachmentBehavior.length = 20
+            attachmentBehavior.damping = 1
+            attachmentBehavior.frequency = 0.5
+            dynamicAnimator.addBehavior(attachmentBehavior)
+        } else if property == "snap" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            let snapBehavior = UISnapBehavior(item: v, snapTo: CGPoint(x: self.view.bounds.size.width - 100, y: self.view.bounds.height/2))
+            snapBehavior.damping = 0.8
+            dynamicAnimator.addBehavior(snapBehavior)
+        } else if property == "push" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            
+            let v1 = UIView(frame: CGRect(x: self.view.bounds.size.width/2 + 50, y: 200, width: 50, height: 10))
+            v1.backgroundColor = .gray
+            self.view.addSubview(v1)
+            
+            let pushBehavoir = UIPushBehavior(items: [v, v1], mode: UIPushBehaviorMode.instantaneous)
+            pushBehavoir.active = true
+            pushBehavoir.setAngle(CGFloat(M_PI_2), magnitude:0.1)// 推力的方向 和 item的加速度
+            
+            dynamicAnimator.addBehavior(pushBehavoir)
+        } else if property == "field" {
+            if dynamicAnimator == nil {
+                dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
+                dynamicAnimator.delegate = self
+            }
+            
+            let fieldBehavior = UIFieldBehavior.magneticField()
+            fieldBehavior.strength = 1
+            fieldBehavior.falloff = 0.01
+            fieldBehavior.position = self.view.center
+            fieldBehavior.region = UIRegion(size: CGSize(width: 200, height: 100))
+            
+            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
+            v.backgroundColor = .black
+            self.view.addSubview(v)
+            
+            let v1 = UIView(frame: CGRect(x: self.view.bounds.size.width/2 + 50, y: 200, width: 50, height: 10))
+            v1.backgroundColor = .gray
+            self.view.addSubview(v1)
+            
+            let pushBehavoir = UIPushBehavior(items: [v, v1], mode: UIPushBehaviorMode.instantaneous)
+            pushBehavoir.active = true
+            pushBehavoir.setAngle(CGFloat(M_PI_2), magnitude:0.1)// 推力的方向 和 item的加速度
+            dynamicAnimator.addBehavior(fieldBehavior)
+            dynamicAnimator.addBehavior(pushBehavoir)
         }
     }
     
+    // MARK: - CAAnimationDelegate
     func animationDidStart(_ anim: CAAnimation) { // even though put a break point in this delegate method,but not effect the animation thread
         print("animationDidStart")
         if self.detailDescriptionLabel.layer.animation(forKey: "bounds") == anim {
@@ -512,7 +721,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         } else if self.detailDescriptionLabel.layer.animation(forKey: "opacity") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.darkGray
         } else if self.detailDescriptionLabel.layer.animation(forKey: "shadowColor") == anim {
-            
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "spring") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.magenta
         }
     }
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
@@ -538,35 +748,39 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         } else if self.detailDescriptionLabel.layer.animation(forKey: "opacity") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if self.detailDescriptionLabel.layer.animation(forKey: "spring") == anim {
+            self.detailDescriptionLabel.backgroundColor = UIColor.clear
         }
             
         self.detailDescriptionLabel.layer.removeAllAnimations()
     }
     
-    func tips(info:String) -> Void {
-        tipsLabel = UILabel()
-        tipsLabel.backgroundColor = UIColor.lightGray
-        tipsLabel.textColor = UIColor.red
-        tipsLabel.numberOfLines = 10
-        tipsLabel.lineBreakMode = .byWordWrapping
-        tipsLabel.textAlignment = .center
-        tipsLabel.text          = info
-        tipsLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.view.addSubview(tipsLabel)
-        let constraintWidth = NSLayoutConstraint.init(item: tipsLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute:NSLayoutAttribute.init(rawValue: 0)!, multiplier: 1.0, constant: 300)
-        let constaintHeight = NSLayoutConstraint.init(item: tipsLabel, attribute: .height, relatedBy: .equal, toItem: nil
-            , attribute: NSLayoutAttribute.init(rawValue: 0)!, multiplier: 1.0, constant: 100)
-        
-        tipsLabel.addConstraints([constraintWidth, constaintHeight])
-        let constraintX = NSLayoutConstraint.init(item: tipsLabel, attribute: .centerX, relatedBy: .equal, toItem: tipsLabel.superview, attribute: .centerX, multiplier: 1.0, constant: 0)
-        let constraintY = NSLayoutConstraint.init(item: tipsLabel, attribute: .top, relatedBy: .equal, toItem: detailDescriptionLabel, attribute: .bottom, multiplier: 1.0, constant: 20)
-        self.view.addConstraints([constraintX, constraintY])
+    // MARK: - UIDynamicAnimatorDelegate
+    func dynamicAnimatorWillResume(_ animator: UIDynamicAnimator) {
+        //
     }
-    func removeTips() -> Void {
-        tipsLabel.removeFromSuperview()
+    func dynamicAnimatorDidPause(_ animator: UIDynamicAnimator) {
+        //
     }
     
+    // MARK: - UICollisionBehaviorDelegate
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item1: UIDynamicItem, with item2: UIDynamicItem, at p: CGPoint) {
+        print(p)
+    }
+    func collisionBehavior(_ behavior: UICollisionBehavior, endedContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?) {
+        print(identifier as? NSString ?? "endedContactFor")
+    }
+    
+    func collisionBehavior(_ behavior: UICollisionBehavior, endedContactFor item1: UIDynamicItem, with item2: UIDynamicItem) {
+        print(item2)
+    }
+    
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
+        print(p)
+        print(identifier as? NSString ?? "beganContactFor")
+    }
+    
+    // MARK: - Transform Animation
     func translationXAnimation() -> Void { // "translation" must be nsvalue with NSSize or CGSize,it indicate x and y axis
         self.detailDescriptionLabel.layer.removeAllAnimations()
         let animationTranslationX = CABasicAnimation(keyPath: "transform.translation.x")
@@ -606,9 +820,43 @@ class DetailViewController: UIViewController, CAAnimationDelegate{
         animationScaleX.isRemovedOnCompletion = false
         animationScaleX.autoreverses = true
         
-        animationScaleX.fromValue = NSNumber(value: 1)
-        animationScaleX.toValue   = NSNumber(value: 5)
+        animationScaleX.fromValue = NSNumber(value: 0.5)
+        animationScaleX.toValue   = NSNumber(value: 2)
         self.detailDescriptionLabel.layer.add(animationScaleX, forKey: "transform")
     }
+    
+    // MARK: - Utils
+    func degreeToRadius(degree:Float) -> Float {
+        return degree/180.0 * Float(M_PI)
+    }
+    
+    func radiusToDegree(radius:Float) -> Float {
+        return radius / Float(M_PI) * 180.0
+    }
+    
+    func tips(info:String) -> Void {
+        tipsLabel = UILabel()
+        tipsLabel.backgroundColor = UIColor.lightGray
+        tipsLabel.textColor = UIColor.red
+        tipsLabel.numberOfLines = 10
+        tipsLabel.lineBreakMode = .byWordWrapping
+        tipsLabel.textAlignment = .center
+        tipsLabel.text          = info
+        tipsLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(tipsLabel)
+        let constraintWidth = NSLayoutConstraint.init(item: tipsLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute:NSLayoutAttribute.init(rawValue: 0)!, multiplier: 1.0, constant: 300)
+        let constaintHeight = NSLayoutConstraint.init(item: tipsLabel, attribute: .height, relatedBy: .equal, toItem: nil
+            , attribute: NSLayoutAttribute.init(rawValue: 0)!, multiplier: 1.0, constant: 100)
+        
+        tipsLabel.addConstraints([constraintWidth, constaintHeight])
+        let constraintX = NSLayoutConstraint.init(item: tipsLabel, attribute: .centerX, relatedBy: .equal, toItem: tipsLabel.superview, attribute: .centerX, multiplier: 1.0, constant: 0)
+        let constraintY = NSLayoutConstraint.init(item: tipsLabel, attribute: .top, relatedBy: .equal, toItem: detailDescriptionLabel, attribute: .bottom, multiplier: 1.0, constant: 20)
+        self.view.addConstraints([constraintX, constraintY])
+    }
+    func removeTips() -> Void {
+        tipsLabel.removeFromSuperview()
+    }
+    
 }
 

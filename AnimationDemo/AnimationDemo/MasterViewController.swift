@@ -42,6 +42,13 @@ class MasterViewController: UITableViewController {
         // 8.Opacity Property
         let opacityProperty = ["opacityProperty":["opacity"]]
         
+        // 9.Spring
+        let springAniamtion = ["springAnimation":["spring"]]
+        
+        // 10.Dynamic Animator
+        let dynamicAnimator = ["dynamicAnimator":["gravity", "collision", "attachment", "snap", "push", "field"]]
+        
+        
         objects.append(geometryProperties)
         objects.append(backgroundProperties)
         objects.append(layerContent)
@@ -50,6 +57,8 @@ class MasterViewController: UITableViewController {
         objects.append(filtersProperty)
         objects.append(shadowProperties)
         objects.append(opacityProperty)
+        objects.append(springAniamtion)
+        objects.append(dynamicAnimator)
         self.tableView.reloadData()
         
         
