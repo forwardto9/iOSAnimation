@@ -673,27 +673,58 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             if dynamicAnimator == nil {
                 dynamicAnimator = UIDynamicAnimator(referenceView: self.view)
                 dynamicAnimator.delegate = self
+                dynamicAnimator.setValue(true, forKey: "debugEnabled")
             }
             
-            let fieldBehavior = UIFieldBehavior.magneticField()
-            fieldBehavior.strength = 1
-            fieldBehavior.falloff = 0.01
-            fieldBehavior.position = self.view.center
+            let fieldBehavior = UIFieldBehavior.springField()
+            fieldBehavior.addItem(self.detailDescriptionLabel)
+            fieldBehavior.direction = CGVector(dx: 1, dy: 0)
+//            fieldBehavior.strength = 0.3
+//            fieldBehavior.falloff = 0.1
+            fieldBehavior.position = self.detailDescriptionLabel.center
             fieldBehavior.region = UIRegion(size: CGSize(width: 200, height: 100))
             
-            let v = UIView(frame: CGRect(x: self.view.bounds.size.width/2 - 50, y: 100, width: 50, height: 10))
-            v.backgroundColor = .black
-            self.view.addSubview(v)
+            let parentBehavior = UIDynamicBehavior()
+            let itemBehavior = UIDynamicItemBehavior(items: [self.detailDescriptionLabel])
+            itemBehavior.density = 0.01
+            itemBehavior.resistance = 10
+            itemBehavior.friction   = 0
+            itemBehavior.allowsRotation = false
+//            parentBehavior.addChildBehavior(itemBehavior)
+            parentBehavior.addChildBehavior(fieldBehavior)
+            dynamicAnimator.addBehavior(parentBehavior)
             
-            let v1 = UIView(frame: CGRect(x: self.view.bounds.size.width/2 + 50, y: 200, width: 50, height: 10))
-            v1.backgroundColor = .gray
-            self.view.addSubview(v1)
+            let pushBehavoir = UIPushBehavior(items: [self.detailDescriptionLabel], mode: UIPushBehaviorMode.instantaneous)
             
-            let pushBehavoir = UIPushBehavior(items: [v, v1], mode: UIPushBehaviorMode.instantaneous)
             pushBehavoir.active = true
-            pushBehavoir.setAngle(CGFloat(M_PI_2), magnitude:0.1)// 推力的方向 和 item的加速度
-            dynamicAnimator.addBehavior(fieldBehavior)
+            pushBehavoir.pushDirection = CGVector(dx: 0, dy: -1)
+            pushBehavoir.magnitude = 0.1
+            
             dynamicAnimator.addBehavior(pushBehavoir)
+            
+/*
+            Field Behaviors
+            class func dragField()
+            Creates and returns a field behavior for slowing an object’s velocity.
+            class func springField()
+            Creates and returns a spring field behavior.
+            class func velocityField(direction: CGVector)
+            Creates and returns a field behavior object that applies a directional velocity to items.
+            class func electricField()
+            Creates and returns a field behavior object that interacts with charged items.
+            class func magneticField()
+            Creates and returns a field behavior that interacts with charged items.
+            class func radialGravityField(position: CGPoint)
+            Creates and returns a field behavior object that models a radial gravitational force.
+            class func linearGravityField(direction: CGVector)
+            Creates and returns a field behavior object that models a linear gravitational force.
+            class func vortexField()
+            Creates and returns a field behavior object that applies a rotational force relative to the field’s position.
+            class func noiseField(smoothness: CGFloat, animationSpeed: CGFloat)
+            Creates and returns a field behavior object that applies random noise to other forces.
+            class func turbulenceField(smoothness: CGFloat, animationSpeed: CGFloat)
+            Creates and returns a field behavior object that applies noise to an item in motion.
+ */
         }
     }
     

@@ -100,7 +100,7 @@
 					C2922FDA1DC322B900AD8E2A = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 299MFJ63GP;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -270,6 +270,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.teg.AnimationDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "e26abd85-7227-4afd-84ae-c277e416e47d";
+				PROVISIONING_PROFILE_SPECIFIER = "teg-common-dev";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -278,11 +280,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 299MFJ63GP;
 				INFOPLIST_FILE = AnimationDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.teg.AnimationDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "e26abd85-7227-4afd-84ae-c277e416e47d";
+				PROVISIONING_PROFILE_SPECIFIER = "teg-common-dev";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -306,6 +311,7 @@
 				C2922FF11DC322B900AD8E2A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
