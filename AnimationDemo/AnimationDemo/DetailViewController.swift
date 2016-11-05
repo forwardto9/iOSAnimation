@@ -13,7 +13,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
 
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     fileprivate var tipsLabel:UILabel!
-    fileprivate var  dynamicAnimator:UIDynamicAnimator!
+    fileprivate var dynamicAnimator:UIDynamicAnimator!
+    fileprivate var layer:CALayer!
 
 
     func configureView() {
@@ -21,6 +22,12 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         if let detail = self.detailItem {
             if let label = self.detailDescriptionLabel {
                 label.text = detail
+                if detail == "CATransaction" {
+                    layer = CALayer()
+                    layer.frame = CGRect(x: 100, y: 100, width: 30, height: 30)
+                    layer.backgroundColor = UIColor.red.cgColor
+                    self.view.layer.addSublayer(layer)
+                }
             }
         }
     }
@@ -57,7 +64,6 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             self.configureView()
         }
     }
-
 
     func animationWith(property:String) -> Void {
         if property == "bounds" {
@@ -679,18 +685,18 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             let fieldBehavior = UIFieldBehavior.springField()
             fieldBehavior.addItem(self.detailDescriptionLabel)
             fieldBehavior.direction = CGVector(dx: 1, dy: 0)
-//            fieldBehavior.strength = 0.3
+            fieldBehavior.strength = 10
 //            fieldBehavior.falloff = 0.1
             fieldBehavior.position = self.detailDescriptionLabel.center
             fieldBehavior.region = UIRegion(size: CGSize(width: 200, height: 100))
             
             let parentBehavior = UIDynamicBehavior()
             let itemBehavior = UIDynamicItemBehavior(items: [self.detailDescriptionLabel])
-            itemBehavior.density = 0.01
-            itemBehavior.resistance = 10
+            itemBehavior.density = 1
+            itemBehavior.resistance = 0
             itemBehavior.friction   = 0
-            itemBehavior.allowsRotation = false
-//            parentBehavior.addChildBehavior(itemBehavior)
+            itemBehavior.allowsRotation = true
+            parentBehavior.addChildBehavior(itemBehavior)
             parentBehavior.addChildBehavior(fieldBehavior)
             dynamicAnimator.addBehavior(parentBehavior)
             
@@ -725,6 +731,55 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             class func turbulenceField(smoothness: CGFloat, animationSpeed: CGFloat)
             Creates and returns a field behavior object that applies noise to an item in motion.
  */
+        } else if property == "CATransaction" { // presentation Layer 与 model Layer的区别:CATransaction is implicit animations, so it operate presentation layer, not model layer
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(5)
+            CATransaction.setCompletionBlock({
+                print("CATransaction Done!")
+            })
+            
+            layer.opacity = 0
+            layer.position = CGPoint(x: 200, y: 200)
+            
+            CATransaction.commit()
+        } else if property == "CATransition" { // only for layer
+            
+            
+            let transition = CATransition()
+            transition.type = kCATransitionPush // if type is Fade subtype is not necessary and the parent view is hidden or visiable; Push, the parent view is slide into place,Reveal, subType is necessary
+            transition.subtype = kCATransitionFromBottom
+            transition.duration = 3
+            transition.delegate = self
+            
+            
+            let vc = UIViewController()
+            vc.view.backgroundColor = UIColor.orange
+            self.navigationController?.pushViewController(vc, animated: false)
+            
+            self.navigationController?.view.layer.add(transition, forKey: property)
+        } else if property == "UIView" { // in main thread
+            
+/*
+            frame
+            bounds
+            center
+            transform
+            alpha
+            backgroundColor
+ */
+            UIView.animate(withDuration: 3, delay: 1, usingSpringWithDamping: 0.1, initialSpringVelocity: 1, options: UIViewAnimationOptions.allowUserInteraction, animations: {
+                self.detailDescriptionLabel.backgroundColor = UIColor.orange // not animatable
+                self.detailDescriptionLabel.frame = CGRect(x: 100, y: 100, width: 100, height: 50)
+                
+            }, completion: { (result) in
+                if result {
+                    self.detailDescriptionLabel.backgroundColor = UIColor.clear
+                }
+            })
+            
+            UIView.animate(withDuration: 5, animations: {
+                self.detailDescriptionLabel.alpha = 0.3
+            })
         }
     }
     

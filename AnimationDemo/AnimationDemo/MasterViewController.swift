@@ -48,6 +48,9 @@ class MasterViewController: UITableViewController {
         // 10.Dynamic Animator
         let dynamicAnimator = ["dynamicAnimator":["gravity", "collision", "attachment", "snap", "push", "field"]]
         
+        // 11.CATransaction, CATransition, UIView.animation
+        let otherAnimationMethod = ["Other Animtion Method":["CATransaction", "CATransition", "UIView"]]
+        
         
         objects.append(geometryProperties)
         objects.append(backgroundProperties)
@@ -59,6 +62,7 @@ class MasterViewController: UITableViewController {
         objects.append(opacityProperty)
         objects.append(springAniamtion)
         objects.append(dynamicAnimator)
+        objects.append(otherAnimationMethod)
         self.tableView.reloadData()
         
         
