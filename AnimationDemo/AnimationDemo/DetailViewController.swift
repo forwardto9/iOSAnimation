@@ -691,7 +691,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             fieldBehavior.region = UIRegion(size: CGSize(width: 200, height: 100))
             
             let parentBehavior = UIDynamicBehavior()
-            let itemBehavior = UIDynamicItemBehavior(items: [self.detailDescriptionLabel])
+            let itemBehavior = UIDynamicItemBehavior(items: [self.detailDescriptionLabel]) // 给指定的Item设置物理属性
             itemBehavior.density = 1
             itemBehavior.resistance = 0
             itemBehavior.friction   = 0
