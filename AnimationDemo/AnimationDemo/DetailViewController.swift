@@ -218,6 +218,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             transformIdentity.m21 = -sin(CGFloat(delta))
             transformIdentity.m22 = cos(CGFloat(delta))
             
+            
+            // m34用来做透视变换，一般的值是 m34 = -1/z, z值是视点的位置，取正直，最好在500 - 1000之间
             print(transformIdentity)
             
 //            self.view.layer.transform = transformIdentity
@@ -894,6 +896,12 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         animationRotationX.fromValue = NSNumber(value: 0)
         animationRotationX.byValue   = NSNumber(value: M_PI_4)
         animationRotationX.toValue   = NSNumber(value: M_PI/3)
+        
+        
+        var transform = CATransform3DIdentity
+        transform.m34 = -1/300
+        self.detailDescriptionLabel.layer.transform = transform
+        
         self.detailDescriptionLabel.layer.add(animationRotationX, forKey: "transform")
     }
     
