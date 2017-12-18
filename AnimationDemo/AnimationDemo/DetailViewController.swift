@@ -41,7 +41,10 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        animationWith(property: self.detailDescriptionLabel.text!)
+        if (self.detailDescriptionLabel.text != nil) {
+            animationWith(property: self.detailDescriptionLabel.text!)
+        }
+        
         // anchorPoint 公式
         // frame.orign.x = position.x - anchorPoint.x * bounds.size.width
         // frmae.orign.y = position.y - anchorPoint.y * bounds.size.height
@@ -78,7 +81,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             basicAnimation.duration = 10
             // CAMediaTiming协议, 决定动画对象相对于它的父节点开始的时间,动画的总时长是duration + beginTime
             basicAnimation.beginTime = CACurrentMediaTime() + 1
-            // CAMediaTiming协议, 指定额外的时间偏移，相对于激活的本地时间，设置了这个值之后，动画的声誉时间是duration - timeOffset,并且，动画执行了duration，但是动画效果是先从duration - timeOffset开始，最后才会播放timeOffset部分的动画
+            // CAMediaTiming协议, 指定额外的时间偏移，相对于激活的本地时间，设置了这个值之后，动画开始的时间是duration - timeOffset, 并且动画执行了duration，但是动画效果是先从duration - timeOffset开始，最后才会播放timeOffset部分的动画
             basicAnimation.timeOffset = 3.5
             // CAMediaTiming 协议，决定动画重复的次数
             basicAnimation.repeatCount = 5
@@ -87,16 +90,13 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             
             // CAMediaTiming协议，决定动画的完成时，是不是平滑的回放
             basicAnimation.autoreverses = true
-            // CAMediaTiming协议，决定layer的represent是不是被保留， 当动画结束的时候
-            basicAnimation.fillMode = kCAFillModeBackwards
-            
             // CAMediaTiming协议，决定动画结束之后，动画接收者的representation是不是被冻结或者是被清除
             basicAnimation.fillMode = kCAFillModeBackwards
             // CAMediaTiming 协议， 指定动画时间如何从接收者时间空间到它的父节点的时间空间的映射,default 1.0,速度有相对的参照物，父节点就是这个意思
             basicAnimation.speed = 10
             /**********以上关于time的解释，http://www.cocoachina.com/programmer/20131218/7569.html 这篇文章挺好**********/
             
-            // CAAnimation类的属性，指定动画的pace
+            // CAAnimation类的属性，指定动画的pace，timingFunction有两种类型，一种是系统定义的常量，另外一种是通过执行2个控制点的自定义函数
             basicAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseIn)
             // CAAnimation类的属性，决定代理方法的stop方法会不会被调用
             basicAnimation.isRemovedOnCompletion = false
@@ -285,7 +285,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             
             var transformIdentity = CATransform3DIdentity
             transformIdentity.m34 = -1/700
-            transformIdentity = CATransform3DRotate(transformIdentity, CGFloat(M_PI/3), 0, 1, 0)
+            transformIdentity = CATransform3DRotate(transformIdentity, CGFloat(Double.pi/3), 0, 1, 0)
             self.view.layer.sublayerTransform = transformIdentity
             
             let keyframeAnimation = CAKeyframeAnimation(keyPath: property)
@@ -294,8 +294,15 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
-            keyframeAnimation.values = [NSNumber.init(value: -100), NSNumber.init(value: 0), NSNumber.init(value: 50), NSNumber.init(value: 150)]
-            keyframeAnimation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionLinear)
+            let values = [NSNumber(value: -50), NSNumber(value: 0), NSNumber(value: 50), NSNumber(value: 100)]
+            keyframeAnimation.values = values
+            
+            // Bezier曲线的组成是数据点+控制点
+            // Bezier曲线函数需要提供的参数是控制点，n阶需要n-1个控制点, 2个数据点，即起点和终点
+            // CAMediaTimingFunction方法是构造三阶的Bezier曲线，需要提供两个控制点(c1x, c1y), (c2x, c2y)，起点(0,0), 终点(1.0, 1.0)
+            // 参考链接 https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+            let timeFunction = CAMediaTimingFunction(controlPoints: 1, 0, 1.0, 0)
+            keyframeAnimation.timingFunction = timeFunction
             
             self.detailDescriptionLabel.layer.add(keyframeAnimation, forKey: property)
             layer2.add(keyframeAnimation, forKey: property)
@@ -598,7 +605,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             collisionBehavior.collisionMode = .everything
             collisionBehavior.translatesReferenceBoundsIntoBoundary = true
             collisionBehavior.setTranslatesReferenceBoundsIntoBoundary(with: UIEdgeInsets(top: 10, left: 10, bottom: 100, right: 10))
-            let bezierPath = UIBezierPath(arcCenter: CGPoint(x:self.view.bounds.width/2, y:self.view.bounds.height/2), radius: self.view.bounds.width/2 - 50, startAngle: 0, endAngle: CGFloat(2) * CGFloat(M_PI), clockwise: true)
+            let bezierPath = UIBezierPath(arcCenter: CGPoint(x:self.view.bounds.width/2, y:self.view.bounds.height/2), radius: self.view.bounds.width/2 - 50, startAngle: 0, endAngle: CGFloat(2) * CGFloat(Double.pi), clockwise: true)
             collisionBehavior.addBoundary(withIdentifier: property as NSString, for: bezierPath)
             collisionBehavior.addBoundary(withIdentifier: "bounds2" as NSString, from: CGPoint(x:10, y:self.view.bounds.height/2), to: CGPoint(x:self.view.bounds.width/2, y:self.view.bounds.height))
             dynamicAnimator.addBehavior(collisionBehavior)
@@ -674,7 +681,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             
             let pushBehavoir = UIPushBehavior(items: [v, v1], mode: UIPushBehaviorMode.instantaneous)
             pushBehavoir.active = true
-            pushBehavoir.setAngle(CGFloat(M_PI_2), magnitude:0.1)// 推力的方向 和 item的加速度
+            pushBehavoir.setAngle(CGFloat(Double.pi/2), magnitude:0.1)// 推力的方向 和 item的加速度
             
             dynamicAnimator.addBehavior(pushBehavoir)
         } else if property == "field" {
@@ -748,17 +755,18 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             
             
             let transition = CATransition()
-            transition.type = kCATransitionPush // if type is Fade subtype is not necessary and the parent view is hidden or visiable; Push, the parent view is slide into place,Reveal, subType is necessary
+            // if type is Fade subtype is not necessary and the parent view is hidden or visiable; Push, the parent view is slide into place,Reveal, subType is necessary
+            transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromBottom
-            transition.duration = 3
+            transition.duration = 2
+            transition.startProgress = 0.3
+            transition.endProgress = 0.8
             transition.delegate = self
-            
             
             let vc = UIViewController()
             vc.view.backgroundColor = UIColor.orange
+            vc.view.layer.add(transition, forKey: property)
             self.navigationController?.pushViewController(vc, animated: false)
-            
-            self.navigationController?.view.layer.add(transition, forKey: property)
         } else if property == "UIView" { // in main thread
             
 /*
@@ -838,6 +846,9 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
         } else if self.detailDescriptionLabel.layer.animation(forKey: "spring") == anim {
             self.detailDescriptionLabel.backgroundColor = UIColor.clear
+        } else if anim.isKind(of: CATransition.self) {
+            self.detailDescriptionLabel.text = nil;
+            self.navigationController?.popViewController(animated: true)
         }
             
         self.detailDescriptionLabel.layer.removeAllAnimations()
@@ -869,7 +880,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
     }
     
     // MARK: - Transform Animation
-    func translationXAnimation() -> Void { // "translation" must be nsvalue with NSSize or CGSize,it indicate x and y axis
+    @objc func translationXAnimation() -> Void { // "translation" must be nsvalue with NSSize or CGSize,it indicate x and y axis
         self.detailDescriptionLabel.layer.removeAllAnimations()
         let animationTranslationX = CABasicAnimation(keyPath: "transform.translation.x")
         animationTranslationX.delegate = self
@@ -885,7 +896,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         self.detailDescriptionLabel.layer.add(animationTranslationX, forKey: "transform")
     }
     
-    func rotationYAnimation() -> Void { //  "rotation" is identical to setting "rotation.z"
+    @objc func rotationYAnimation() -> Void { //  "rotation" is identical to setting "rotation.z"
         self.detailDescriptionLabel.layer.removeAllAnimations()
         let animationRotationX = CABasicAnimation(keyPath: "transform.rotation.y")
         animationRotationX.delegate = self
@@ -894,8 +905,8 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         animationRotationX.isRemovedOnCompletion = false
         animationRotationX.autoreverses = true
         animationRotationX.fromValue = NSNumber(value: 0)
-        animationRotationX.byValue   = NSNumber(value: M_PI_4)
-        animationRotationX.toValue   = NSNumber(value: M_PI/3)
+        animationRotationX.byValue   = NSNumber(value: Double.pi/4)
+        animationRotationX.toValue   = NSNumber(value: Double.pi/3)
         
         
         var transform = CATransform3DIdentity
@@ -905,7 +916,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         self.detailDescriptionLabel.layer.add(animationRotationX, forKey: "transform")
     }
     
-    func scaleXAnimation() -> Void { // "scale" is the average for all three(x,y,z) scale factors
+    @objc func scaleXAnimation() -> Void { // "scale" is the average for all three(x,y,z) scale factors
         self.detailDescriptionLabel.layer.removeAllAnimations()
         let animationScaleX = CABasicAnimation(keyPath: "transform.scale.x")
         animationScaleX.delegate = self
@@ -921,11 +932,11 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
     
     // MARK: - Utils
     func degreeToRadius(degree:Float) -> Float {
-        return degree/180.0 * Float(M_PI)
+        return degree/180.0 * Float(Double.pi)
     }
     
     func radiusToDegree(radius:Float) -> Float {
-        return radius / Float(M_PI) * 180.0
+        return radius / Float(Double.pi) * 180.0
     }
     
     func tips(info:String) -> Void {
@@ -948,9 +959,9 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         let constraintY = NSLayoutConstraint.init(item: tipsLabel, attribute: .top, relatedBy: .equal, toItem: detailDescriptionLabel, attribute: .bottom, multiplier: 1.0, constant: 20)
         self.view.addConstraints([constraintX, constraintY])
     }
+    
     func removeTips() -> Void {
         tipsLabel.removeFromSuperview()
     }
-    
 }
 
