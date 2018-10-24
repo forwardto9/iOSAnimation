@@ -37,8 +37,24 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.configureView()
+        
+        self.createDisplayLink();
     }
 
+    func createDisplayLink() {
+        let displaylink = CADisplayLink(target: self, selector: #selector(step))
+        displaylink.preferredFramesPerSecond = 15
+        displaylink.add(to: .current,  forMode: .defaultRunLoopMode)
+    }
+    
+    @objc func step(displaylink: CADisplayLink) {
+        print("设备已开机时间:\(CACurrentMediaTime())")
+        let actualFramesPerSecond = 1 / (displaylink.targetTimestamp - displaylink.timestamp)
+        self.navigationItem.title = "FPS:\(actualFramesPerSecond)"
+        if (CACurrentMediaTime() >= displaylink.targetTimestamp) {
+            displaylink.remove(from: .current, forMode: .defaultRunLoopMode)
+        }
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
