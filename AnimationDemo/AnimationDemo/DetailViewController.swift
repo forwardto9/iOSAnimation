@@ -9,7 +9,7 @@
 import UIKit
 import CoreGraphics
 
-class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
+class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate, CALayerDelegate {
 
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     fileprivate var tipsLabel:UILabel!
@@ -24,6 +24,7 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
                 label.text = detail
                 if detail == "CATransaction" {
                     layer = CALayer()
+                    self.layer.delegate = self;
                     layer.frame = CGRect(x: 100, y: 100, width: 30, height: 30)
                     layer.backgroundColor = UIColor.red.cgColor
                     self.view.layer.addSublayer(layer)
@@ -294,7 +295,11 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             keyframeAnimation.repeatCount = 3
             keyframeAnimation.isRemovedOnCompletion = false
             keyframeAnimation.autoreverses = true
-            let values = [NSNumber(value: -50), NSNumber(value: 0), NSNumber(value: 50), NSNumber(value: 100)]
+            let v1 = NSNumber(value: -50)
+            let v2 = NSNumber(value: 0)
+            let v3 = NSNumber(value: 50)
+            let v4 = NSNumber(value: 100)
+            let values = [v1, v2, v3, v4]
             keyframeAnimation.values = values
             
             // Bezier曲线的组成是数据点+控制点
@@ -790,6 +795,88 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
             UIView.animate(withDuration: 5, animations: {
                 self.detailDescriptionLabel.alpha = 0.3
             })
+        } else if property == "CAReplicatorLayer" {
+            let replicatorLayer = CAReplicatorLayer()
+            
+            let redSquare = CALayer()
+            redSquare.backgroundColor = UIColor.white.cgColor
+            redSquare.frame = CGRect(x: 50, y: 200, width: 40, height: 40)
+            
+            let instanceCount = 5
+            
+            replicatorLayer.instanceCount = instanceCount
+            replicatorLayer.instanceTransform = CATransform3DMakeTranslation(50, 0, 0)
+            
+            let offsetStep = -1 / Float(instanceCount)
+            replicatorLayer.instanceBlueOffset = offsetStep
+            replicatorLayer.instanceGreenOffset = offsetStep
+            
+            replicatorLayer.addSublayer(redSquare)
+            self.view.layer.addSublayer(replicatorLayer)
+            
+            
+            let animation = CABasicAnimation(keyPath: "instanceColor")
+            animation.delegate = self
+            animation.duration = 3
+            animation.isRemovedOnCompletion = false
+            animation.autoreverses = true
+            
+            animation.fromValue = UIColor.white.cgColor
+            animation.toValue   = UIColor.black.cgColor
+            replicatorLayer.add(animation, forKey: "instanceColor")
+        } else if property == "CATransformLayer" {
+            let layer = CATransformLayer()
+            
+            func layerOfColor(_ color: UIColor, zPosition: CGFloat) -> CALayer {
+                let layer = CALayer()
+                layer.frame = CGRect(x: 10, y: 100, width: 100, height: 100)
+                layer.backgroundColor = color.cgColor
+                layer.zPosition = zPosition
+                layer.opacity = 0.5
+                
+                return layer
+            }
+            
+            layer.addSublayer(layerOfColor(.red, zPosition: 20))
+            layer.addSublayer(layerOfColor(.green, zPosition: 40))
+            layer.addSublayer(layerOfColor(.blue, zPosition: 60))
+            
+            var perspective = CATransform3DIdentity
+            perspective.m34 = -1 / 100
+            
+            layer.transform = CATransform3DRotate(perspective, 0.3, 0, 1, 0)
+            self.view.layer.addSublayer(layer)
+        } else if property == "CAEmitterLayer" {
+            let emitterLayer = CAEmitterLayer()
+            
+            emitterLayer.emitterPosition = CGPoint(x: self.view.center.x, y: self.view.center.y - 60)
+            
+            let cell = CAEmitterCell()
+            cell.birthRate = 10
+            cell.lifetime = 10
+            cell.velocity = 100
+            cell.scale = 0.2
+            
+            cell.emissionRange = CGFloat.pi * 2.0
+            cell.contents = UIImage(named: "contentsGravity")!.cgImage
+            
+            emitterLayer.emitterCells = [cell]
+            
+            view.layer.addSublayer(emitterLayer)
+        } else if property == "CATiledLayer" {
+            let tiledView = TiledView(frame: CGRect(x: 10, y: 100, width: 300, height: self.view.bounds.height / 2 - 100))
+            self.view.addSubview(tiledView)
+        } else if property == "CAScrollLayer" {
+            let contentLayer = CALayer();
+            contentLayer.bounds = CGRect(x: 0, y: 0, width: 300, height: 300)
+            contentLayer.position = CGPoint(x: 100, y: 100)
+            contentLayer.contents = UIImage(named: "tree")!.cgImage
+            let scrollLayer = ScrollLayer(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+            scrollLayer.center = CGPoint(x: self.view.center.x, y: self.view.center.y - 150)
+            scrollLayer.layer.borderColor = UIColor.gray.cgColor
+            scrollLayer.layer.borderWidth = 1
+            scrollLayer.layer.addSublayer(contentLayer)
+            self.view.addSubview(scrollLayer)
         }
     }
     
@@ -962,6 +1049,16 @@ class DetailViewController: UIViewController, CAAnimationDelegate, UIDynamicAnim
     
     func removeTips() -> Void {
         tipsLabel.removeFromSuperview()
+    }
+    // MARK: - CALayerDelegate
+    func layerWillDraw(_ layer: CALayer) {
+        print("layer will draw")
+    }
+    func display(_ layer: CALayer) {
+        print("layer display")
+    }
+    func layoutSublayers(of layer: CALayer) {
+        print("layout layer")
     }
 }
 

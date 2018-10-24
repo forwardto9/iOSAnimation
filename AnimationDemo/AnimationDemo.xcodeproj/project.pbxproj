@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C279A87F218057140054BD5A /* TiledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C279A87E218057140054BD5A /* TiledView.swift */; };
+		C279A88321805B190054BD5A /* ScrollLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C279A88221805B190054BD5A /* ScrollLayer.m */; };
 		C2922FDF1DC322B900AD8E2A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2922FDE1DC322B900AD8E2A /* AppDelegate.swift */; };
 		C2922FE11DC322B900AD8E2A /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2922FE01DC322B900AD8E2A /* MasterViewController.swift */; };
 		C2922FE31DC322B900AD8E2A /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2922FE21DC322B900AD8E2A /* DetailViewController.swift */; };
@@ -16,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C279A87E218057140054BD5A /* TiledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiledView.swift; sourceTree = "<group>"; };
+		C279A88021805B190054BD5A /* AnimationDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AnimationDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		C279A88121805B190054BD5A /* ScrollLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollLayer.h; sourceTree = "<group>"; };
+		C279A88221805B190054BD5A /* ScrollLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollLayer.m; sourceTree = "<group>"; };
 		C2922FDB1DC322B900AD8E2A /* AnimationDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimationDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2922FDE1DC322B900AD8E2A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C2922FE01DC322B900AD8E2A /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -63,6 +69,10 @@
 				C2922FE71DC322B900AD8E2A /* Assets.xcassets */,
 				C2922FE91DC322B900AD8E2A /* LaunchScreen.storyboard */,
 				C2922FEC1DC322B900AD8E2A /* Info.plist */,
+				C279A87E218057140054BD5A /* TiledView.swift */,
+				C279A88121805B190054BD5A /* ScrollLayer.h */,
+				C279A88221805B190054BD5A /* ScrollLayer.m */,
+				C279A88021805B190054BD5A /* AnimationDemo-Bridging-Header.h */,
 			);
 			path = AnimationDemo;
 			sourceTree = "<group>";
@@ -94,13 +104,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Tencent;
 				TargetAttributes = {
 					C2922FDA1DC322B900AD8E2A = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 299MFJ63GP;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -144,6 +154,8 @@
 				C2922FE31DC322B900AD8E2A /* DetailViewController.swift in Sources */,
 				C2922FE11DC322B900AD8E2A /* MasterViewController.swift in Sources */,
 				C2922FDF1DC322B900AD8E2A /* AppDelegate.swift in Sources */,
+				C279A88321805B190054BD5A /* ScrollLayer.m in Sources */,
+				C279A87F218057140054BD5A /* TiledView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +194,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -189,6 +202,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -239,6 +253,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -246,6 +261,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -280,6 +296,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 299MFJ63GP;
 				INFOPLIST_FILE = AnimationDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -287,6 +304,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e26abd85-7227-4afd-84ae-c277e416e47d";
 				PROVISIONING_PROFILE_SPECIFIER = "teg-common-dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "AnimationDemo/AnimationDemo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};
@@ -296,6 +315,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 299MFJ63GP;
 				INFOPLIST_FILE = AnimationDemo/Info.plist;
@@ -304,6 +324,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e26abd85-7227-4afd-84ae-c277e416e47d";
 				PROVISIONING_PROFILE_SPECIFIER = "teg-common-dev";
+				SWIFT_OBJC_BRIDGING_HEADER = "AnimationDemo/AnimationDemo-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};

@@ -51,6 +51,9 @@ class MasterViewController: UITableViewController {
         // 11.CATransaction, CATransition, UIView.animation
         let otherAnimationMethod = ["Other Animtion Method":["CATransaction", "CATransition", "UIView"]]
         
+        // 12. Other Layer Type
+        let otherLayerTypes = ["Advanced Layer":["CAReplicatorLayer", "CATransformLayer", "CAEmitterLayer", "CATiledLayer", "CAScrollLayer"]];
+        
         
         objects.append(geometryProperties)
         objects.append(backgroundProperties)
@@ -63,6 +66,7 @@ class MasterViewController: UITableViewController {
         objects.append(springAniamtion)
         objects.append(dynamicAnimator)
         objects.append(otherAnimationMethod)
+        objects.append(otherLayerTypes)
         self.tableView.reloadData()
         
         
